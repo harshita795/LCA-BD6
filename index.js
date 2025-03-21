@@ -23,6 +23,10 @@ app.post("/login", loginLimiter, (req, res) => {
     const { email, password } = req.body;
     const user = loginUser(email, password);
 
+    if (!email || !password) {
+      return res.status(400).json({ error: "Eamil or password is required." });
+    }
+
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -42,3 +46,18 @@ if (require.main === module) {
 }
 
 module.exports = { app };
+
+// **1. Missing Fields Test**
+
+// - **Description:** Handle scenarios where `email` or `password` fields are missing.
+// - **Expected Outcome:** The API should return an error when either field is absent.
+
+// **2. Rate Limiting Test**
+
+// - **Description:** Simulate 5 failed attempts within one minute and ensure the API blocks the next attempt with the following message:
+
+// ```jsx
+// {
+//     "error": "Too many login attempts. Try again later."
+// }
+// ```
